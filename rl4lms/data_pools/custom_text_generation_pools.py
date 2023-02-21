@@ -155,6 +155,39 @@ class CommonGen(TextGenPool):
         return split_name
 
 
+class SocialIQA(TextGenPool):
+    @classmethod
+    def prepare(cls, split: str) -> 'TextGenPool':
+        data_files = {
+                        "train": "/home/wentingz/research/rl4lms/rl4lms/data_pools/data/socialiqa/socialiqa_train.json",
+                        "validation": "/home/wentingz/research/rl4lms/rl4lms/data_pools/data/socialiqa/socialiqa_validation.json"
+                     }
+        ds = load_dataset('json', data_files=data_files)
+        samples = []
+        split_id = SocialIQA.gen_split_name(split)
+        for ix, item in enumerate(ds[split_id]):
+            targets = [item['labels']]
+            sample = Sample(id=f"{split}_{ix}",
+                            prompt_or_input_text=item['text'],
+                            references=targets,
+                            )
+            samples.append(sample)
+        pool_instance = cls(samples)
+        return pool_instance
+
+    @staticmethod
+    def gen_split_name(split: str):
+        if split == "train":
+            split_name = "train"
+        elif split == "val":
+            split_name = "validation"
+        elif split == "test":
+            split_name = "validation"
+        else:
+            raise NotImplementedError
+        return split_name
+
+
 class Xsum(TextGenPool):
     @classmethod
     def prepare(cls, split: str, prompt_suffix: str = "TL;DR:"):

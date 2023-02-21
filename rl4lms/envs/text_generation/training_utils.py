@@ -178,7 +178,7 @@ class OnPolicyTrainer(TrainerWarmStartMixin):
             "generation_kwargs", None)
 
     def _evaluate_on_datapools(self, epoch: int,
-                               splits: List[str] = ["val", "test"]):
+                               splits: List[str] = ["val"]):
         for split in splits:
             evaluate_on_samples(policy=self._alg.policy,
                                 tokenizer=self._tokenizer,
