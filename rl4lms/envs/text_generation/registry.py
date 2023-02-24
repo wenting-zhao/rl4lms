@@ -74,9 +74,7 @@ from rl4lms.envs.text_generation.reward import (
     SpiderRewardFunction,
     chrF,
     IntentAccuracy,
-    ContextRewardFunction,
-    ExplanationRewardFunction,
-    OutcomeRewardFunction
+    ExpRewardFunction,
 
 )
 from rl4lms.envs.text_generation.preference_reward import CommonGenPrefRM
@@ -138,9 +136,7 @@ class RewardFunctionRegistry:
         "chrf": chrF,
         "intent_accuracy": IntentAccuracy,
         "common_gen_preference_model": CommonGenPrefRM,
-        "context_reward": ContextRewardFunction,
-        "explanation_reward": ExplanationRewardFunction,
-        "outcome_reward": OutcomeRewardFunction,
+        "exp_reward": ExpRewardFunction,
     }
 
     @classmethod
