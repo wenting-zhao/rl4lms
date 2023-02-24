@@ -105,9 +105,13 @@ def query_gpt(inp, z_alone=False):
     return p
 
 
-class ContextRewardFunction(RewardFunction):
-    def __init__(self, shaping_fn: str = None) -> None:
+class ExpRewardFunction(RewardFunction):
+    def __init__(self, shaping_fn: str = None, x: int = 1,
+            z: int = 1, y: int = 1) -> None:
         super().__init__()
+        self.x = x
+        self.z = z
+        self.y = y
 
     def __call__(
         self,
@@ -118,71 +122,32 @@ class ContextRewardFunction(RewardFunction):
         meta_info: Dict[str, Any] = None,
     ) -> float:
 
-        # compute meteor at the end of episode
+        reward = 0
         if done:
             text = next_observation.prompt_or_input_text
-            exp = next_observation.context_text
+            reference = next_observation.target_or_reference_texts
             idx = text.find('\n')
             context = text[:idx]
-            qa = text[idx+2:].replace('\nExplanation for the Answer:', '')
-            inp = f"{exp} \n {context}"
-            reward = query_gpt(inp)
-            return reward
-        else:
-            return 0
+            qa = text[idx+2:].replace('\nGood explanation for the Answer:', '')
 
-
-class ExplanationRewardFunction(RewardFunction):
-    def __init__(self, shaping_fn: str = None) -> None:
-        super().__init__()
-
-    def __call__(
-        self,
-        current_observation: Observation,
-        action: int,
-        next_observation: Observation,
-        done: bool,
-        meta_info: Dict[str, Any] = None,
-    ) -> float:
-
-        # compute meteor at the end of episode
-        if done:
-            text = next_observation.prompt_or_input_text
             exp = next_observation.context_text
-            idx = text.find('\n')
-            context = text[:idx]
-            qa = text[idx+2:].replace('\nExplanation for the Answer:', '')
-            inp = exp
-            reward = query_gpt(inp, z_alone=True)
-            return reward
-        else:
-            return 0
-
-class OutcomeRewardFunction(RewardFunction):
-    def __init__(self, shaping_fn: str = None) -> None:
-        super().__init__()
-
-    def __call__(
-        self,
-        current_observation: Observation,
-        action: int,
-        next_observation: Observation,
-        done: bool,
-        meta_info: Dict[str, Any] = None,
-    ) -> float:
-
-        # compute meteor at the end of episode
-        if done:
-            text = next_observation.prompt_or_input_text
-            exp = next_observation.context_text
-            idx = text.find('\n')
-            context = text[:idx]
-            qa = text[idx+2:].replace('\nExplanation for the Answer:', '')
-            inp = f"Context: {context} {exp} \n {qa}"
-            reward = query_gpt(inp)
-            return reward
-        else:
-            return 0
+            exp = exp.split('.')[0].strip()
+            if self.x != 0:
+                inp = f"{exp} \n {context}"
+                x_reward = query_gpt(inp)
+                reward += self.x * x_reward
+            if self.z != 0:
+                inp = exp
+                z_reward = query_gpt(inp, z_alone=True)
+                reward += self.z * z_reward
+            if self.y != 0:
+                inp = f"Context: {context} {exp} \n {qa}"
+                pred_y = query_gpt(inp)
+                inp = f"Context: {context} {reference} \n {qa}"
+                gold_y = query_gpt(inp)
+                y_reward = pred_y - gold_y
+                reward += self.y * y_reward
+        return reward
 
 
 class CommonGenPenaltyShapingFunction(RewardFunction):
