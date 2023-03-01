@@ -1,0 +1,62 @@
+tokenizer:
+  model_name: gpt2-xl
+  padding_side: left
+  truncation_side: left
+  pad_token_as_eos_token: True 
+
+reward_fn:
+  id: exp_reward
+  args:
+    x: 0
+    z: 0
+    y: 1
+
+datapool:
+  id: anlg
+  args: {}
+
+env:
+  n_envs: 10
+  args:
+    max_prompt_length: 64
+    max_episode_length: 48
+    terminate_on_eos: True
+
+alg:
+  id: ppo
+  args: 
+    n_steps: 512
+    batch_size: 64
+    verbose: 1
+    learning_rate: 0.000001
+    n_epochs: 5
+    gamma: 1
+    
+  kl_div:
+    coeff: 0.1
+    target_kl: 0.5
+
+  policy:
+    id: causal_lm_actor_critic_policy
+    args:
+            #model_name: /home/wentingz/research/rl4lms/models/baseline-test-clm-1e-5
+      model_name: gpt2-xl 
+      apply_model_parallel: True
+      generation_kwargs:
+        do_sample: True
+        min_length: 48
+        max_new_tokens: 48
+      
+train_evaluation:
+  eval_batch_size: 64
+  n_iters: 50
+  eval_every: 10
+  save_every: 50
+  metrics:
+    - id: causal_perplexity
+      args:
+        tokenizer_id: gpt2
+        stride: 512
+        model_type: causal
+    - id: diversity
+      args: {}

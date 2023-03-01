@@ -188,6 +188,48 @@ class SocialIQA(TextGenPool):
         return split_name
 
 
+class aNLG(TextGenPool):
+    @classmethod
+    def prepare(cls, split: str) -> 'TextGenPool':
+        data_files = {
+                        "train": "/home/wentingz/research/rl4lms/rl4lms/data_pools/data/anlg/train.json",
+                        "validation": "/home/wentingz/research/rl4lms/rl4lms/data_pools/data/anlg/dev.json"
+                        "test": "/home/wentingz/research/rl4lms/rl4lms/data_pools/data/anlg/test.json"
+                     }
+        multiref_files = {
+                        "validation": "/home/wentingz/research/rl4lms/rl4lms/data_pools/data/anlg/dev_multiref.json"
+                        "test": "/home/wentingz/research/rl4lms/rl4lms/data_pools/data/anlg/test_multiref.json"
+                     }
+        ds = load_dataset('json', data_files=data_files)
+        multiref_ds = load_dataset('json', data_files=multiref_files)
+        samples = []
+        split_id = SocialIQA.gen_split_name(split)
+        for ix, item in enumerate(ds[split_id]):
+            if split_id == 'train':
+                targets = [item['labels']]
+            else:
+                targets = multiref_ds[split_id][ix]["explanation"]
+            sample = Sample(id=f"{split}_{ix}",
+                            prompt_or_input_text=item['text'],
+                            references=targets,
+                            )
+            samples.append(sample)
+        pool_instance = cls(samples)
+        return pool_instance
+
+    @staticmethod
+    def gen_split_name(split: str):
+        if split == "train":
+            split_name = "train"
+        elif split == "val":
+            split_name = "validation"
+        elif split == "test":
+            split_name = "test"
+        else:
+            raise NotImplementedError
+        return split_name
+
+
 class Xsum(TextGenPool):
     @classmethod
     def prepare(cls, split: str, prompt_suffix: str = "TL;DR:"):
