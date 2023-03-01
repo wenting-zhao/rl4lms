@@ -193,11 +193,11 @@ class aNLG(TextGenPool):
     def prepare(cls, split: str) -> 'TextGenPool':
         data_files = {
                         "train": "/home/wentingz/research/rl4lms/rl4lms/data_pools/data/anlg/train.json",
-                        "validation": "/home/wentingz/research/rl4lms/rl4lms/data_pools/data/anlg/dev.json"
+                        "validation": "/home/wentingz/research/rl4lms/rl4lms/data_pools/data/anlg/dev.json",
                         "test": "/home/wentingz/research/rl4lms/rl4lms/data_pools/data/anlg/test.json"
                      }
         multiref_files = {
-                        "validation": "/home/wentingz/research/rl4lms/rl4lms/data_pools/data/anlg/dev_multiref.json"
+                        "validation": "/home/wentingz/research/rl4lms/rl4lms/data_pools/data/anlg/dev_multiref.json",
                         "test": "/home/wentingz/research/rl4lms/rl4lms/data_pools/data/anlg/test_multiref.json"
                      }
         ds = load_dataset('json', data_files=data_files)

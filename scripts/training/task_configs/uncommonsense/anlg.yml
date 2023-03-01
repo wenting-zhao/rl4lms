@@ -65,7 +65,8 @@ train_evaluation:
     - id: bleurt
       args: {}
     - id: bert_score
-      args: {}
+      args:
+        language: en
     - id: rouge
       args: {}
     - id: bleu
