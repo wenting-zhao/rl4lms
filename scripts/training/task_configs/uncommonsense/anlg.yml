@@ -60,3 +60,13 @@ train_evaluation:
         model_type: causal
     - id: diversity
       args: {}
+    - id: meteor
+      args: {}
+    - id: bleurt
+      args: {}
+    - id: bert_score
+      args: {}
+    - id: rouge
+      args: {}
+    - id: bleu
+      args: {}
