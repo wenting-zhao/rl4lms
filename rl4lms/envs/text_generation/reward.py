@@ -138,8 +138,7 @@ class ExpRewardFunction(RewardFunction):
                 qa = qa.split("Outcome: ")[1]
 
             exp = next_observation.context_text
-            exp = exp.split('.')[0].strip()
-            exp = exp + '.'
+            exp = exp[: text.find('.')]
             if self.x != 0:
                 inp = f"{exp} \n {context}"
                 x_reward = query_gpt(inp)
