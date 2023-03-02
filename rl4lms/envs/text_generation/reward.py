@@ -139,6 +139,8 @@ class ExpRewardFunction(RewardFunction):
 
             exp = next_observation.context_text
             exp = exp[: text.find('.')]
+            if not exp.endswith('.'):
+                exp = exp + '.'
             if self.x != 0:
                 inp = f"{exp} \n {context}"
                 x_reward = query_gpt(inp)
