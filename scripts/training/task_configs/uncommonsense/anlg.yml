@@ -43,8 +43,10 @@ alg:
       apply_model_parallel: True
       generation_kwargs:
         do_sample: True
-        min_length: 16
+        min_length: 48
         max_new_tokens: 48
+        max_length: 128
+        no_repeat_ngram_size: 3
       
 train_evaluation:
   eval_batch_size: 64
