@@ -39,8 +39,7 @@ alg:
   policy:
     id: causal_lm_actor_critic_policy
     args:
-            #model_name: /home/wentingz/research/rl4lms/models/baseline-test-clm-1e-5
-      model_name: gpt2-xl 
+      model_name: wentingzhao/gpt2-xl-anlg
       apply_model_parallel: True
       generation_kwargs:
         do_sample: True

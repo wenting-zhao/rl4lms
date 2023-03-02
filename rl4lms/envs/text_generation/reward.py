@@ -75,8 +75,8 @@ def eprint(*args, **kwargs):
 
 def query_gpt(inp, z_alone=False):
     headers = {
-        'Authorization': ,
-        'OpenAI-Organization': 
+        'Authorization': "Bearer ",
+        'OpenAI-Organization': "org-EryH1QYCQUIHJGviV3ile7Z1"
     }
     json_data = {
       "model": "text-davinci-003",
@@ -128,10 +128,18 @@ class ExpRewardFunction(RewardFunction):
             reference = next_observation.target_or_reference_texts
             idx = text.find('\n')
             context = text[:idx]
-            qa = text[idx+2:].replace('\nGood explanation for the Answer:', '')
+            qa = text[idx+2:]
+            idx = qa.find('\n')
+            qa = qa[:idx]
+            context, qa = text.split('\n')[:2]
+            if "Context: " in context:
+                context = context.split("Context: ")[1]
+            if "Outcome: " in qa:
+                qa = qa.split("Outcome: ")[1]
 
             exp = next_observation.context_text
             exp = exp.split('.')[0].strip()
+            exp = exp + '.'
             if self.x != 0:
                 inp = f"{exp} \n {context}"
                 x_reward = query_gpt(inp)
