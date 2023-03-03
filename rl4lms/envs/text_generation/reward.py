@@ -107,11 +107,19 @@ def query_gpt(inp, z_alone=False):
 
 class ExpRewardFunction(RewardFunction):
     def __init__(self, shaping_fn: str = None, x: int = 1,
-            z: int = 1, y: int = 1) -> None:
+            z: int = 1, y: int = 1, coeff: int = 100) -> None:
         super().__init__()
         self.x = x
         self.z = z
         self.y = y
+        self.coeff = coeff
+        from rl4lms.envs.text_generation.registry import RewardFunctionRegistry
+
+        self._shaping_fn = (
+            RewardFunctionRegistry.get(shaping_fn, {})
+            if shaping_fn is not None
+            else shaping_fn
+        )
 
     def __call__(
         self,
@@ -156,6 +164,11 @@ class ExpRewardFunction(RewardFunction):
                 gold_y = query_gpt(inp)
                 y_reward = pred_y - gold_y
                 reward += self.y * y_reward
+            if self._shaping_fn is not None:
+                aux_score = self._shaping_fn(
+                    current_observation, action, next_observation, done, meta_info
+                )
+                reward = self.coeff * reward + aux_score
         return reward
 
 

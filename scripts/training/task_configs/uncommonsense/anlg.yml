@@ -5,11 +5,12 @@ tokenizer:
   pad_token_as_eos_token: True 
 
 reward_fn:
-  id: exp_reward
+  id: "exp_reward"
   args:
     x: 0
     z: 0
     y: 1
+    shaping_fn: meteor
 
 datapool:
   id: anlg
@@ -18,19 +19,18 @@ datapool:
 env:
   n_envs: 10
   args:
-    max_prompt_length: 64
-    max_episode_length: 48
+    max_prompt_length: 32
+    max_episode_length: 32
     terminate_on_eos: True
 
 alg:
   id: ppo
   args: 
-    n_steps: 256
+    n_steps: 512
     batch_size: 64
     verbose: 1
     learning_rate: 0.000001
     n_epochs: 5
-    gamma: 1
     
   kl_div:
     coeff: 0.1
@@ -43,7 +43,7 @@ alg:
       apply_model_parallel: True
       generation_kwargs:
         do_sample: True
-        min_length: 48
+        min_length: 32
         max_new_tokens: 48
       
 train_evaluation:
