@@ -70,3 +70,7 @@ train_evaluation:
       args: {}
     - id: bleu
       args: {}
+  generation_kwargs:
+    do_sample: False
+    min_length: 16
+    max_new_tokens: 48
