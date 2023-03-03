@@ -250,7 +250,10 @@ class LMActorCriticPolicy(BasePolicy):
         step_wise_logprobs = []
         step_wise_actions = []
         for step, logits in enumerate(gen_output["scores"]):
-            raw_logits, _ = logits
+            try:
+                raw_logits, _ = logits
+            except ValueError:
+                raw_logits = logits
             actions_at_step = gen_tokens[:, step]
             distribution = Categorical(logits=raw_logits)
             log_probs = distribution.log_prob(actions_at_step)
