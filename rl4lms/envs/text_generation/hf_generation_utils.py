@@ -1710,6 +1710,9 @@ class GenerationMixinWithRawScores:
 
             next_token_logits = outputs.logits[:, -1, :]
 
+            # pre-process distribution
+            next_tokens_scores = logits_processor(input_ids, next_token_logits)
+
             # Store scores, attentions and hidden_states when required
             if return_dict_in_generate:
                 if output_scores:
@@ -1728,10 +1731,6 @@ class GenerationMixinWithRawScores:
                         if self.config.is_encoder_decoder
                         else (outputs.hidden_states,)
                     )
-
-            # pre-process distribution
-            next_tokens_scores = logits_processor(
-                input_ids, next_token_logits, model_inputs)
 
             # argmax
             next_tokens = torch.argmax(next_tokens_scores, dim=-1)
