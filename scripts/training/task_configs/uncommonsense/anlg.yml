@@ -39,7 +39,7 @@ alg:
   policy:
     id: causal_lm_actor_critic_policy
     args:
-      model_name: wentingzhao/gpt2-xl-anlg
+      model_name: wentingzhao/gpt2-xl-anlg-distilled-from-gpt3
       apply_model_parallel: True
       generation_kwargs:
         do_sample: True
