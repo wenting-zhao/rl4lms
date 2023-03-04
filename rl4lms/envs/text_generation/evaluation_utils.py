@@ -41,7 +41,7 @@ def evaluate_on_samples(
         batch_generated_texts = generate_text(
             policy, tokenizer, batch, max_prompt_length, dt_control_token, gen_kwargs
         )
-        batch_generated_texts = [text[: text.find('.')] for text in batch_generated_texts]
+        batch_generated_texts = [text[: text.find('.')].strip() for text in batch_generated_texts]
         batch_generated_texts = [text + '.' for text in batch_generated_texts if not text.endswith('.')]
         batch_ref_texts = [sample.references for sample in batch]
         batch_prompt_texts = [sample.prompt_or_input_text for sample in batch]
