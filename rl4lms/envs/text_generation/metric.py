@@ -4,7 +4,7 @@ import torch
 from typing import List, Dict, Tuple, Any
 from abc import abstractmethod
 import numpy as np
-from datasets import load_metric
+from evaluate import load as load_metric
 from gem_metrics.msttr import MSTTR
 from gem_metrics.ngrams import NGramStats
 from rl4lms.envs.text_generation.caption_metrics.cider import Cider
@@ -155,7 +155,7 @@ class RougeMetric(BaseMetric):
         score_keys = ["rouge1", "rouge2", "rougeL", "rougeLsum"]
         metric_dict = {}
         for rouge_type in score_keys:
-            rouge_score = metric_results[rouge_type].mid.fmeasure
+            rouge_score = metric_results[rouge_type]
             metric_dict[f"lexical/rouge_{rouge_type}"] = (None, rouge_score)
         return metric_dict
 
@@ -238,6 +238,7 @@ class BLEURTMetric(BaseMetric):
         model: PreTrainedModel = None,
         split_name: str = None,
     ) -> Tuple[List[float], float]:
+        reference_texts = [item[0] for item in reference_texts]
         metric_results = self._metric.compute(
             predictions=generated_texts, references=reference_texts
         )
@@ -606,10 +607,12 @@ class SacreBLEUMetric(BaseMetric):
         split_name: str = None,
     ) -> Tuple[List[float], float]:
 
-        metric_results = self._metric.compute(
-            predictions=generated_texts, references=reference_texts, **self._args
-        )
-        bleu_score = metric_results["score"] / 100
+        for gen_text, ref_text in zip(generated_texts, reference_texts):
+            metric_results = self._metric.compute(
+                predictions=[gen_text], references=[ref_text], **self._args
+            )
+            bleu_score += metric_results["score"] / 100
+        bleu_score = bleu_score / len(generated_texts)
         metric_dict = {"lexical/sacrebleu": (None, bleu_score)}
         return metric_dict
 
