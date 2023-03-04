@@ -75,7 +75,7 @@ def eprint(*args, **kwargs):
 
 def query_gpt(inp, z_alone=False):
     headers = {
-        'Authorization': "Bearer ",
+        'Authorization': "Bearer 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",
         'OpenAI-Organization': "org-EryH1QYCQUIHJGviV3ile7Z1"
     }
     json_data = {

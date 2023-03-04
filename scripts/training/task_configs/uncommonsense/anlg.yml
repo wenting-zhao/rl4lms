@@ -64,5 +64,5 @@ train_evaluation:
         use_single_ref: False
   generation_kwargs:
     do_sample: False
-    min_length: 16
-    max_new_tokens: 48
+    no_repeat_ngram_size: 3
+    max_length: 128

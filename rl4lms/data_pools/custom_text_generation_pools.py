@@ -203,7 +203,7 @@ class aNLG(TextGenPool):
         ds = load_dataset('json', data_files=data_files)
         multiref_ds = load_dataset('json', data_files=multiref_files)
         samples = []
-        split_id = SocialIQA.gen_split_name(split)
+        split_id = aNLG.gen_split_name(split)
         for ix, item in enumerate(ds[split_id]):
             if split_id == 'train':
                 targets = [item['labels']]
