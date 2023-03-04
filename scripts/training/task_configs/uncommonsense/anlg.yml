@@ -19,8 +19,8 @@ datapool:
 env:
   n_envs: 10
   args:
-    max_prompt_length: 32
-    max_episode_length: 32
+    max_prompt_length: 64
+    max_episode_length: 48
     terminate_on_eos: True
 
 alg:
@@ -52,13 +52,6 @@ train_evaluation:
   eval_every: 10
   save_every: 50
   metrics:
-    - id: causal_perplexity
-      args:
-        tokenizer_id: gpt2
-        stride: 512
-        model_type: causal
-    - id: diversity
-      args: {}
     - id: meteor
       args: {}
     - id: bleurt
@@ -67,9 +60,8 @@ train_evaluation:
       args:
         language: en
     - id: rouge
-      args: {}
-    - id: bleu
-      args: {}
+      args:
+        use_single_ref: False
   generation_kwargs:
     do_sample: False
     min_length: 16
